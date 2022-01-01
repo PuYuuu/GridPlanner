@@ -13,7 +13,7 @@ int main( int argc, char* args[] )
     gp->addGridTarget(0, 9, 9);
     gp->run();
 
-    while(1) {
+    while(!gp->getGridShouldQuit()) {
         ;
     }
 
