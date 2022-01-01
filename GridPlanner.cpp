@@ -303,14 +303,14 @@ void GridPlanner::addGridAgent(uint16_t id, uint16_t x, uint16_t y)
     }
 }
 
-void GridPlanner::addGridAgent(uint16_t id, coor agent)
+void GridPlanner::addGridAgent(uint16_t id, coor pos)
 {
     std::unique_lock<std::mutex> addGridAgent_Lock(gridMap_Mutex);
 
-    if (checkCoorValid(agent.x, agent.y)) {
-        gridAgents[id].x = agent.x;
-        gridAgents[id].y = agent.y;
-        gridMap[agent.y][agent.x] = OCCUPY_A;
+    if (checkCoorValid(pos.x, pos.y)) {
+        gridAgents[id].x = pos.x;
+        gridAgents[id].y = pos.y;
+        gridMap[pos.y][pos.x] = OCCUPY_A;
     } else {
         SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "The input coordinate is invalid!");
     }
@@ -324,24 +324,59 @@ void GridPlanner::addGridTarget(uint16_t id, uint16_t x, uint16_t y)
         gridTargets[id].x = x;
         gridTargets[id].y = y;
         gridMap[y][x] = TARGET;
-    } else {
-        SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "The input coordinate is invalid!");
     }
 }
 
-void GridPlanner::addGridTarget(uint16_t id, coor agent)
+void GridPlanner::addGridTarget(uint16_t id, coor pos)
 {
     std::unique_lock<std::mutex> addGridTarget_Lock(gridMap_Mutex);
 
-    if (checkCoorValid(agent.x, agent.y)) {
-        gridTargets[id].x = agent.x;
-        gridTargets[id].y = agent.y;
-        gridMap[agent.y][agent.x] = TARGET;
-    } else {
-        SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "The input coordinate is invalid!");
-    }
+    if (checkCoorValid(pos.x, pos.y)) {
+        gridTargets[id].x = pos.x;
+        gridTargets[id].y = pos.y;
+        gridMap[pos.y][pos.x] = TARGET;
+    } 
 }
 
+bool GridPlanner::checkCoorValid(int x, int y)
+{
+    if (x >= gridColNums || x < 0 || y >= gridRowNums || y < 0) {
+        SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "The input coordinate is out of range!");
+        return false;
+    } else if (gridMap[y][x] == OCCUPY_O || 
+        (!agentCanBeOerlap && gridMap[y][x] == OCCUPY_A)){
+        SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "There is a obstacle!");
+        return false;
+    }
+    return true;
+}
+
+void GridPlanner::setAgentPos(uint16_t id, coor pos)
+{
+    std::unique_lock<std::mutex> addGridAgent_Lock(gridMap_Mutex);
+
+    if (!gridAgents.count(id)) {
+        SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "The agent ID is invalid!");
+    }
+    if (checkCoorValid(pos.x, pos.y)) {
+        gridMap[gridAgents[id].y][gridAgents[id].x] = IDLE;
+        gridAgents[id].x = pos.x;
+        gridAgents[id].y = pos.y;
+        gridMap[pos.y][pos.x] = OCCUPY_A;
+    } else {
+        SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "The input coordinate is invalid!");
+    }    
+}
+
+bool GridPlanner::getGridShouldQuit(void)
+{
+    return gridShouldQuit;
+}
+
+vector<vector<gState>> GridPlanner::getGridMap(void)
+{
+    return gridMap;
+}
 
 void GridPlanner::gridPlanSDLInit(void)
 {
@@ -445,13 +480,13 @@ void GridPlanner::getRectPonit(SDL_Point p1, SDL_Point p2, SDL_Point* sp, SDL_Po
 
 SDL_Point GridPlanner::getGridXY(int32_t mouseX, int32_t mouseY)
 {
-    SDL_Point coor;
-    coor.x = -1, coor.y = -1;
+    SDL_Point p;
+    p.x = -1, p.y = -1;
     if (mouseX > 0 && mouseY > 0 && mouseX <= windowWidth && mouseY <= windowHeight) {
-        coor.x = mouseX / gridWidth;
-        coor.y = mouseY / gridHeight;
+        p.x = mouseX / gridWidth;
+        p.y = mouseY / gridHeight;
     }
-    return coor;
+    return p;
 }
 
 void GridPlanner::saveMap(const string& filename,const vector<vector<gState>>& map)
@@ -474,21 +509,11 @@ void GridPlanner::saveMap(const string& filename,const vector<vector<gState>>& m
 bool GridPlanner::checkFilePath(const string& filename)
 {
 #ifdef __linux__
-    std::regex r("^[./0-9a-zA-Z-_]+$");
+    std::regex r("^[./0-9a-zA-Z-_*]+$");
 #elif _WIN32
-    std::regex r("^[./\\:0-9a-zA-Z-_]+$");
+    std::regex r("^[./\\:0-9a-zA-Z-_*]+$");
 #endif
     
     return regex_match(filename, r);
 }
 
-bool GridPlanner::checkCoorValid(int x, int y)
-{
-    if (x >= gridColNums || x < 0 || y >= gridRowNums || y < 0) {
-        return false;
-    } else if (gridMap[y][x] == OCCUPY_O || 
-        (!agentCanBeOerlap && gridMap[y][x] == OCCUPY_A)){
-        return false;
-    }
-    return true;
-}

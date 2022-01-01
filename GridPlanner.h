@@ -14,8 +14,9 @@ using std::string;
 using std::pair;
 using std::unordered_map;
 
-enum gColor { WHITE, BLACK, RED, ORANGE, YELLOW, GREEN, CYAN, BLUE, MAGENTA, GRAY, BROWN };
-enum gState  {IDLE, OCCUPY_O, OCCUPY_A, TARGET};
+enum gColor  { WHITE, BLACK, RED, ORANGE, YELLOW, GREEN, CYAN, BLUE, MAGENTA, GRAY, BROWN };
+enum gState  { IDLE, OCCUPY_O, OCCUPY_A, TARGET };
+enum gAction { UP, DOWN, LEFT, RIGHT, UPLEFT, UPRIGHT, DOWNLEFT, DOWNRIGHT, STOP };
 
 struct GridAgent {
     uint16_t Id;
@@ -25,8 +26,15 @@ struct GridAgent {
 };
 
 struct coor {
-    uint16_t x;
-    uint16_t y;
+    int x;
+    int y;
+
+    bool operator==(coor& c) {
+        return x == c.x && y == c.y;
+    }
+    bool operator!=(coor& c) {
+        return !(x == c.x && y == c.y);
+    }
 };
 
 class GridPlanner {
@@ -43,9 +51,13 @@ public:
     void setFramerate(uint8_t rate);
     void setShowGridLine(bool flag);
     void addGridAgent(uint16_t id, uint16_t x, uint16_t y);
-    void addGridAgent(uint16_t id, coor agent);
+    void addGridAgent(uint16_t id, coor pos);
     void addGridTarget(uint16_t id, uint16_t x, uint16_t y);
-    void addGridTarget(uint16_t id, coor agent);
+    void addGridTarget(uint16_t id, coor pos);
+    bool checkCoorValid(int x, int y);
+    void setAgentPos(uint16_t id, coor pos);
+    bool getGridShouldQuit(void);
+    vector<vector<gState>> getGridMap(void);
     
 private:
     SDL_Window* window = nullptr;
@@ -83,7 +95,7 @@ private:
     SDL_Point getGridXY(int32_t mouseX, int32_t mouseY);
     void saveMap(const string& filename, const vector<vector<gState>>& map);
     bool checkFilePath(const string& filename);
-    bool checkCoorValid(int x, int y);
+    
 };
 
 #endif
