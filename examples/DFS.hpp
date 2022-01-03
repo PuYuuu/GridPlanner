@@ -2,52 +2,21 @@
 #ifndef __DFS_HPP
 #define __DFS_HPP
 
-#include <vector>
-#include <algorithm>
-#include "../GridPlanner.h"
 
-using std::vector;
-vector<coor> dirs = {{-1, 0}, {1, 0}, {0, 1}, {0, -1}};
+#include "pathSearch.hpp"
 
-class dfs {
+
+class dfs : public pathSearch{
 public:
-    dfs(vector<vector<gState>> _map, coor _start, coor _end);
-    ~dfs();
+    dfs(vector<vector<gState>> _map, coor _start, coor _end, bool _enableDiagonal = false):
+        pathSearch(_map,  _start, _end, _enableDiagonal){};
+    ~dfs() {};
 
     vector<coor> run(void);
-    bool checkCoor(int x, int y);
 
 private:
-    int row;
-    int col;
-    coor end;
-    coor start;
-    vector<vector<gState>> map;
-    vector<vector<bool>>   visited;
-    vector<vector<coor>>   parent;
-
     bool searchPath(coor curNode);
 };
-
-dfs::dfs(vector<vector<gState>> _map, coor _start, coor _end) 
-{
-    row = _map.size();
-    col = _map[0].size();
-    map = _map;
-    start = _start;
-    end = _end;
-    visited.resize(row);
-    parent.resize(row);
-    for (int i = 0; i < row; ++i) {
-        visited[i].resize(col);
-        parent[i].resize(col);
-    }
-}
-
-dfs::~dfs()
-{
-
-}
 
 vector<coor> dfs::run(void)
 {
@@ -57,21 +26,9 @@ vector<coor> dfs::run(void)
         return path;
     }
 
-    coor tmp = end;
-    while (tmp != start) {
-        path.emplace_back(tmp);
-        tmp = parent[tmp.y][tmp.x];
-    }
-    path.emplace_back(start);
-    std::reverse(path.begin(), path.end());
+    path = buildPath();
 
     return path;
-}
-
-bool dfs::checkCoor(int x, int y)
-{
-    return (x >= 0 && x < col && y >= 0 && y < row && 
-        (map[y][x] == IDLE || map[y][x] == TARGET)); 
 }
 
 bool dfs::searchPath(coor curNode)

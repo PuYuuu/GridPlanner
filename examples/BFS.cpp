@@ -11,7 +11,7 @@ int main()
     gp->addGridAgent(0, {0, 0});
     gp->addGridTarget(0, {14, 0});
     map = gp->getGridMap();
-    search = new bfs(map, {0, 0}, {14, 0});
+    search = new bfs(map, {0, 0}, {14, 0}, true);
     path = search->run();
     gp->run();
 
