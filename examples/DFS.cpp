@@ -1,17 +1,16 @@
-#include "BFS.hpp"
+#include "DFS.hpp"
 
 int main()
 {
     vector<vector<gState>> map;
     GridPlanner* gp = new GridPlanner();
-    bfs* search;
+    dfs* search;
     vector<coor> path;
-    // gp->createGridMap(480,480,12,12,"/home/puyu/CODE/GridPlanner/maps/empty12*12");
     gp->loadGridMap("/home/puyu/CODE/GridPlanner/maps/maze");
     gp->addGridAgent(0, {0, 0});
     gp->addGridTarget(0, {14, 0});
     map = gp->getGridMap();
-    search = new bfs(map, {0, 0}, {14, 0});
+    search = new dfs(map, {0, 0}, {14, 0});
     path = search->run();
     gp->run();
 
