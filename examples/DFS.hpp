@@ -2,9 +2,7 @@
 #ifndef __DFS_HPP
 #define __DFS_HPP
 
-
 #include "pathSearch.hpp"
-
 
 class dfs : public pathSearch{
 public:
