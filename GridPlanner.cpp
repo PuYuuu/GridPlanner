@@ -323,7 +323,6 @@ void GridPlanner::addGridAgents(int count, ...)
 	va_start(args, count);
     for(int i = 0; i < count; ++i) {
         addGridAgent(gridAgents.size(), va_arg(args, coor));
-
     }
 	va_end(args);
 }
@@ -356,7 +355,6 @@ void GridPlanner::addGridTargets(int count, ...)
 	va_start(args, count);
     for(int i = 0; i < count; ++i) {
         addGridTarget(gridTargets.size(), va_arg(args, coor));
-
     }
 	va_end(args);
 }
