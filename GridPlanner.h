@@ -59,13 +59,15 @@ public:
     void setShowGridLine(bool flag);
     void addGridAgent(uint16_t id, uint16_t x, uint16_t y);
     void addGridAgent(uint16_t id, coor pos);
+    void addGridAgents(int count, ...);
     void addGridTarget(uint16_t id, uint16_t x, uint16_t y);
     void addGridTarget(uint16_t id, coor pos);
-    bool checkCoorValid(int x, int y);
+    void addGridTargets(int count, ...);
+    bool checkCoorValid(int x, int y) const;
     void setAgentPos(uint16_t id, coor pos);
     void addShowPath(vector<coor> path, gPathType type, gColor lcolor);
-    bool getGridShouldQuit(void);
-    vector<vector<gState>> getGridMap(void);
+    bool getGridShouldQuit(void) const;
+    vector<vector<gState>> getGridMap(void) const;
     
 private:
     SDL_Window* window = nullptr;

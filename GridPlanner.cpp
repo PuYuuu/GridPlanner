@@ -317,6 +317,17 @@ void GridPlanner::addGridAgent(uint16_t id, coor pos)
     }
 }
 
+void GridPlanner::addGridAgents(int count, ...)
+{
+    va_list args;
+	va_start(args, count);
+    for(int i = 0; i < count; ++i) {
+        addGridAgent(gridAgents.size(), va_arg(args, coor));
+
+    }
+	va_end(args);
+}
+
 void GridPlanner::addGridTarget(uint16_t id, uint16_t x, uint16_t y)
 {
     std::unique_lock<std::mutex> addGridTarget_Lock(gridMap_Mutex);
@@ -339,7 +350,18 @@ void GridPlanner::addGridTarget(uint16_t id, coor pos)
     } 
 }
 
-bool GridPlanner::checkCoorValid(int x, int y)
+void GridPlanner::addGridTargets(int count, ...)
+{
+    va_list args;
+	va_start(args, count);
+    for(int i = 0; i < count; ++i) {
+        addGridTarget(gridTargets.size(), va_arg(args, coor));
+
+    }
+	va_end(args);
+}
+
+bool GridPlanner::checkCoorValid(int x, int y) const
 {
     if (x >= gridColNums || x < 0 || y >= gridRowNums || y < 0) {
         SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "The input coordinate is out of range!");
@@ -380,12 +402,12 @@ void GridPlanner::addShowPath(vector<coor> path, gPathType type = pLINE, gColor 
     gridPath.emplace_back(pTmp);
 }
 
-bool GridPlanner::getGridShouldQuit(void)
+bool GridPlanner::getGridShouldQuit(void) const
 {
     return gridShouldQuit;
 }
 
-vector<vector<gState>> GridPlanner::getGridMap(void)
+vector<vector<gState>> GridPlanner::getGridMap(void) const
 {
     return gridMap;
 }
