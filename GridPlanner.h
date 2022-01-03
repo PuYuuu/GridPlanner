@@ -17,6 +17,7 @@ using std::unordered_map;
 enum gColor  { WHITE, BLACK, RED, ORANGE, YELLOW, GREEN, CYAN, BLUE, MAGENTA, GRAY, BROWN };
 enum gState  { IDLE, OCCUPY_O, OCCUPY_A, TARGET };
 enum gAction { UP, DOWN, LEFT, RIGHT, UPLEFT, UPRIGHT, DOWNLEFT, DOWNRIGHT, STOP };
+enum gPathType { pLINE, pGRID };
 
 struct GridAgent {
     uint16_t Id;
@@ -35,6 +36,12 @@ struct coor {
     bool operator!=(coor& c) {
         return !(x == c.x && y == c.y);
     }
+};
+
+struct pathInfo {
+    gColor          color;
+    gPathType       type;
+    vector<coor>    path;
 };
 
 class GridPlanner {
@@ -56,6 +63,7 @@ public:
     void addGridTarget(uint16_t id, coor pos);
     bool checkCoorValid(int x, int y);
     void setAgentPos(uint16_t id, coor pos);
+    void addShowPath(vector<coor> path, gPathType type, gColor lcolor);
     bool getGridShouldQuit(void);
     vector<vector<gState>> getGridMap(void);
     
@@ -66,6 +74,7 @@ private:
     vector<vector<gState>> gridMap;
     unordered_map<int, GridAgent> gridAgents;
     unordered_map<int, GridAgent> gridTargets;
+    vector<pathInfo> gridPath;
     uint16_t windowWidth;
     uint16_t windowHeight;
     uint16_t gridColNums;
@@ -84,12 +93,14 @@ private:
     bool agentCanBeOerlap = true;
 
     std::mutex gridMap_Mutex;
+    std::mutex gridPath_Mutex;
 
-    void gridPlanningRun(void);
+    void gridPlannerRun(void);
     void gridPlanSDLInit(void);
     void drawGrid(void);
     void gridClear(void);
     void drawGridLine(void);
+    void drawGridPath(void);
     void drawGridRect(uint16_t x, uint16_t y, enum gColor gc);
     void getRectPonit(SDL_Point p1, SDL_Point p2, SDL_Point* sp, SDL_Point* ep);
     SDL_Point getGridXY(int32_t mouseX, int32_t mouseY);

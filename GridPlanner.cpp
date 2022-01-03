@@ -56,7 +56,7 @@ GridPlanner::GridPlanner(char* cmdStr)
 {
     uint8_t argc = 0;
     char** args = (char**)malloc(sizeof(char*) * 20);
-    bpo::options_description opt("GridPlanning Options");  
+    bpo::options_description opt("GridPlanner Options");  
 
     for (int i = 0; i < 20; ++i) {
         args[i] = (char*)malloc(sizeof(char) * 30);
@@ -75,7 +75,7 @@ GridPlanner::GridPlanner(char* cmdStr)
         bpo::store(parse_command_line(argc, args, opt), vm);  
     }  
     catch(...){  
-        SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "GridPlanning parameter parse ERROR\n");
+        SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "GridPlanner parameter parse ERROR\n");
         exit(-1);  
     } 
     bpo::notify(vm); 
@@ -95,7 +95,7 @@ GridPlanner::~GridPlanner()
     
 }
 
-void GridPlanner::gridPlanningRun(void)
+void GridPlanner::gridPlannerRun(void)
 {   
     gridPlanSDLInit();
 
@@ -106,6 +106,7 @@ void GridPlanner::gridPlanningRun(void)
         gridClear();
         drawGridLine();
         drawGrid();
+        drawGridPath();
         SDL_RenderPresent(renderer);
 
         while (SDL_PollEvent(&event)) {
@@ -132,7 +133,7 @@ void GridPlanner::gridPlanningRun(void)
 
 void GridPlanner::run(void)
 {
-    std::thread GT(&GridPlanner::gridPlanningRun, this);
+    std::thread GT(&GridPlanner::gridPlannerRun, this);
     GT.detach(); 
 }
 
@@ -368,6 +369,17 @@ void GridPlanner::setAgentPos(uint16_t id, coor pos)
     }    
 }
 
+void GridPlanner::addShowPath(vector<coor> path, gPathType type = pLINE, gColor pcolor = GREEN)
+{
+    pathInfo pTmp;
+    std::unique_lock<std::mutex> addShowPath_Lock(gridPath_Mutex);
+
+    pTmp.color = pcolor;
+    pTmp.type = type;
+    pTmp.path = path;
+    gridPath.emplace_back(pTmp);
+}
+
 bool GridPlanner::getGridShouldQuit(void)
 {
     return gridShouldQuit;
@@ -386,7 +398,7 @@ void GridPlanner::gridPlanSDLInit(void)
         exit(-1);
     } 
 
-    window = SDL_CreateWindow( "GridPlanning", SDL_WINDOWPOS_UNDEFINED, 
+    window = SDL_CreateWindow( "GridPlanner", SDL_WINDOWPOS_UNDEFINED, 
         SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, SDL_WINDOW_SHOWN );
     if (!window) {
         SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "Create window failed!\n");
@@ -443,6 +455,35 @@ void GridPlanner::drawGridLine(void)
         }
         for (int i = 0; i <= gridColNums; ++i) {
             SDL_RenderDrawLine(renderer, i * gridWidth, 0, i * gridWidth, windowHeight);
+        }
+    }
+}
+
+void GridPlanner::drawGridPath(void)
+{
+    std::unique_lock<std::mutex> drawGridPath_Lock(gridPath_Mutex);
+    
+    if (gridPath.empty()) {
+        return ;
+    }
+
+
+    for (auto& p : gridPath) {
+        if (p.type == pLINE) {
+            SDL_SetRenderDrawColor(renderer, colorLib[p.color][0], 
+                colorLib[p.color][1], colorLib[p.color][2], 0xFF);
+            glLineWidth(3);
+            for (int i = 0; i < (p.path.size() - 1); ++i) {
+                SDL_RenderDrawLine(renderer, (p.path[i].x + 0.5) * gridWidth, (p.path[i].y + 0.5) * gridHeight, 
+                    (p.path[i + 1].x + 0.5) * gridWidth, (p.path[i + 1].y + 0.5) * gridHeight);
+            }
+        } else {
+            // for (auto& g : p.path) {
+            //     drawGridRect(g.x, g.y, p.color);
+            // }
+            for (int i = 0; i < (p.path.size() - 1); ++i) {
+                drawGridRect(p.path[i].x, p.path[i].y, p.color);
+            }
         }
     }
 }

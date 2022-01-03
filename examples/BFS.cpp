@@ -6,22 +6,24 @@ int main()
     GridPlanner* gp = new GridPlanner();
     bfs* search;
     vector<coor> path;
-    // gp->createGridMap(480,480,12,12,"/home/puyu/CODE/GridPlanner/maps/empty12*12");
     gp->loadGridMap("/home/puyu/CODE/GridPlanner/maps/maze");
     gp->addGridAgent(0, {0, 0});
     gp->addGridTarget(0, {14, 0});
     map = gp->getGridMap();
-    search = new bfs(map, {0, 0}, {14, 0}, true);
+    // search = new bfs(map, {0, 0}, {14, 0}, true);
+    search = new bfs(map, {0, 0}, {14, 0});
     path = search->run();
     gp->run();
 
     for (coor& p : path) {
         gp->setAgentPos(0, p);
-        SDL_Delay(500);
+        SDL_Delay(300);
         if (gp->getGridShouldQuit()) {
             break;
         }
     }
+
+    gp->addShowPath(path, pLINE, GREEN);
 
     while(!gp->getGridShouldQuit()) {
         // do something;
