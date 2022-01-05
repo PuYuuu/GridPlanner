@@ -64,7 +64,10 @@ void GridPlanner::gridPlannerRun(void)
         uint32_t end = SDL_GetTicks();
         uint32_t time = end - start;
         uint32_t rate = 1000 / frameRate;
-        SDL_Delay(rate - time);
+        int delay_ms = rate - time;
+        if (delay_ms > 0) {
+            SDL_Delay(delay_ms);
+        }
     }
     
     SDL_DestroyRenderer(renderer);
@@ -214,7 +217,10 @@ void GridPlanner::createGridMap(uint16_t WW, uint16_t WH, uint16_t GCNs, uint16_
         uint32_t end = SDL_GetTicks();
         uint32_t time = end - start;
         uint32_t rate = 1000 / frameRate;
-        SDL_Delay(rate - time);
+        int delay_ms = rate - time;
+        if (delay_ms > 0) {
+            SDL_Delay(delay_ms);
+        }
     }
     
     SDL_DestroyRenderer(renderer);
