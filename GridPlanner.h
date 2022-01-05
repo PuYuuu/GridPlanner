@@ -48,7 +48,6 @@ class GridPlanner {
 public:
     GridPlanner(void);
     GridPlanner(uint16_t WW, uint16_t WH, uint16_t GCNs, uint16_t GRNs);
-    GridPlanner(char* cmdStr);
     ~GridPlanner();
 
     void run(void);

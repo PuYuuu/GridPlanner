@@ -6,7 +6,7 @@ int main()
     GridPlanner* gp = new GridPlanner();
     dfs* search;
     vector<coor> path;
-    gp->loadGridMap("/home/puyu/CODE/GridPlanner/maps/maze");
+    gp->loadGridMap("../../maps/maze");
     gp->addGridAgent(0, {0, 0});
     gp->addGridTarget(0, {14, 0});
     map = gp->getGridMap();

@@ -1,6 +1,5 @@
 #include <iostream>
 #include "../GridPlanner.h"
-#include <unistd.h>
 
 int main( int argc, char* args[] )
 {
@@ -10,7 +9,7 @@ int main( int argc, char* args[] )
     // gp->setShowGridLine(false);
     // gp->createGridMap(630,630,21,21,"/home/puyu/CODE/GridPlanning/maze");
     // gp->loadGridMap(0.2);
-    gp->loadGridMap("/home/puyu/CODE/GridPlanner/maps/cross");
+    gp->loadGridMap("../../maps/cross");
     // gp->addGridAgent(0, 0, 0);
     // gp->addGridTarget(0, 9, 9);
     gp->addGridAgents(2, a1, a2);

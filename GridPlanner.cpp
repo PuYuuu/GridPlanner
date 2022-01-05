@@ -15,27 +15,6 @@ vector<vector<uint8_t>> colorLib = {{0xFF,0xFF,0xFF},{0x00,0x00,0x00},{0xFF,0x00
     {0xFF,0x99,0x00},{0xFF,0xFF,0x00},{0x00,0xFF,0x00},{0x93,0xC4,0x7D},{0x00,0x00,0xFF},
     {0x67,0x4E,0xA7},{0xCC,0xCC,0xCC},{0x7F,0x60,0x00}};
 
-void convertCmdStr(char* str, char* args[], uint8_t& argc)
-{
-    uint8_t index = 0;
-    bool flag = false;
-    argc = 0;
-
-    for (int i = 0; str[i] != '\0'; ++i) {
-        if (str[i] != ' ') {
-            flag = true;
-            args[argc][index++] = str[i];
-        } else if (flag && str[i] == ' ') {
-            flag = false;
-            argc++;
-            index = 0;
-        }
-    }
-    if (flag) {
-        argc++;
-    }
-}
-
 GridPlanner::GridPlanner(void)
 {
     
@@ -50,44 +29,6 @@ GridPlanner::GridPlanner(uint16_t WW, uint16_t WH, uint16_t GCNs, uint16_t GRNs)
     for (auto& r : gridMap) {
         r.resize(gridColNums);
     }
-}
-
-GridPlanner::GridPlanner(char* cmdStr)
-{
-    uint8_t argc = 0;
-    char** args = (char**)malloc(sizeof(char*) * 20);
-    bpo::options_description opt("GridPlanner Options");  
-
-    for (int i = 0; i < 20; ++i) {
-        args[i] = (char*)malloc(sizeof(char) * 30);
-    }
-    convertCmdStr(cmdStr, args, argc);
-
-    opt.add_options()
-        ("windowWidth,WW",   bpo::value<uint16_t>(&windowWidth),  "The grid window width")
-        ("windowHeight,WH",  bpo::value<uint16_t>(&windowHeight), "The grid window height")
-        ("gridColNums,GCNs", bpo::value<uint16_t>(&gridColNums),  "The grid column nums")
-        ("gridRowNums,GRNs", bpo::value<uint16_t>(&gridRowNums),  "The grid row nums")
-        ("obstacleRate,OR",  bpo::value<double>(&obstacleRate)->default_value(0.2), 
-                            "The rate of obstacle in grid");
-    bpo::variables_map vm;
-    try{  
-        bpo::store(parse_command_line(argc, args, opt), vm);  
-    }  
-    catch(...){  
-        SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "GridPlanner parameter parse ERROR\n");
-        exit(-1);  
-    } 
-    bpo::notify(vm); 
-
-    if (vm.count("help")) {
-        std::cout << opt << std::endl;
-    }
-
-    for (int i = 0; i < 20; ++i) {
-        free(args[i]);
-    }
-    free(args);
 }
 
 GridPlanner::~GridPlanner()
