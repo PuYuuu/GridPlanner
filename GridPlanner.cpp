@@ -1,7 +1,6 @@
 #include "GridPlanner.h"
 #include <malloc.h>
 #include <cmath>
-#include <iostream>
 #include <fstream>
 #include <algorithm>
 #include <regex>
