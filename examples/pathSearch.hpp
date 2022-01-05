@@ -14,6 +14,8 @@ public:
 
     virtual vector<coor> run(void) = 0;
     bool checkCoor(int x, int y);
+    void setStart(coor _start);
+    void setTarget(coor _end);
     vector<coor> buildPath(void);
 
 protected:
@@ -62,6 +64,15 @@ bool pathSearch::checkCoor(int x, int y)
 {
     return (x >= 0 && x < col && y >= 0 && y < row && 
         (map[y][x] == IDLE || map[y][x] == TARGET)); 
+}
+
+void pathSearch::setStart(coor _start)
+{
+    this->start = _start;
+}
+void pathSearch::setTarget(coor _end)
+{
+    this->end = _end;
 }
 
 vector<coor> pathSearch::buildPath(void)
