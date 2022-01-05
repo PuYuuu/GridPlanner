@@ -33,6 +33,3 @@
 
 build
 .vscode
-./examples/main.cpp
-./examples/test.cpp
-

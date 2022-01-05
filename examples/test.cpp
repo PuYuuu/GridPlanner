@@ -3,9 +3,12 @@
 #include <vector>
 #include <string>
 #include <thread>
-#include <unistd.h>
-
 #include <SDL2/SDL.h>
+// #include <unistd.h>
+
+#ifdef _WIN32
+    #include <Windows.h>
+#endif
 #include <GL/gl.h>
 using namespace std;
 
@@ -136,7 +139,8 @@ int main( int argc, char* args[] )
 
     while (true) {
         cout << "main loop\n";
-        sleep(2);
+        // sleep(2);
+        SDL_Delay(2000);
     }
   
     SDL_DestroyRenderer(renderer);

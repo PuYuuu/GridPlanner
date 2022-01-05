@@ -6,6 +6,10 @@
 #include <algorithm>
 #include <regex>
 #include <random>
+
+#ifdef _WIN32
+    #include <Windows.h>
+#endif
 #include <GL/gl.h>  
 
 vector<vector<uint8_t>> colorLib = {{0xFF,0xFF,0xFF},{0x00,0x00,0x00},{0xFF,0x00,0x00},
