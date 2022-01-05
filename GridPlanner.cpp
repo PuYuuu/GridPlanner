@@ -503,9 +503,9 @@ void GridPlanner::saveMap(const string& filename,const vector<vector<gState>>& m
         }
         fout << std::endl;
     }
+    fout.close();
     SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION,
         "Map saver", "Map saved successfully !", NULL);
-    fout.close();
 }
 
 bool GridPlanner::checkFilePath(const string& filename)

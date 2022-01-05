@@ -31,4 +31,7 @@ add_library(GridPlanner SHARED GridPlanner.cpp)
 target_link_libraries(GridPlanner ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES})
 set(GPLIB GridPlanner ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES})
 
+add_executable(CreateMap CreateMap.cpp)
+target_link_libraries(CreateMap ${GPLIB})
+
 add_subdirectory(examples)
